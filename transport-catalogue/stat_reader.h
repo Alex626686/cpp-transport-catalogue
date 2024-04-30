@@ -11,5 +11,5 @@
 void ParseAndPrintStat(const TransportCatalogue& transport_catalogue, std::string_view request,
                        std::ostream& output);
 
-int CountUniqueStops(const Bus& bus);
-double ComputeRoute(const Bus& bus);
+void PrintBus(const TransportCatalogue& transport_catalogue, const Bus& bus, std::ostream& output);
+void PrintStop(const std::vector<std::string_view>& buses, std::ostream& output);

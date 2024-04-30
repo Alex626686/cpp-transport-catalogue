@@ -1,8 +1,5 @@
 #include "input_reader.h"
 
-#include <algorithm>
-#include <cassert>
-#include <iterator>
 
 /**
  * Парсит строку вида "10.123,  -30.1837" и возвращает пару координат (широта, долгота)
@@ -103,14 +100,14 @@ void InputReader::ParseLine(std::string_view line) {
 }
 
 void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) {
-    for (auto& [com, id, disc] : commands_) {
-        if (com == "Stop") {
-            catalogue.AddStop(id, ParseCoordinates(disc));
+    for (const auto& [command, id, description] : commands_) {
+        if (command == "Stop") {
+            catalogue.AddStop(id, ParseCoordinates(description));
         }
     }
-    for (auto& [com, id, disc] : commands_) {
-        if (com == "Bus") {
-            catalogue.AddBus(id, ParseRoute(disc));
+    for (auto& [command, id, description] : commands_) {
+        if (command == "Bus") {
+            catalogue.AddBus(id, ParseRoute(description));
         }
     }
 }

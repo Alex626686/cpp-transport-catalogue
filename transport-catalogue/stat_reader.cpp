@@ -1,11 +1,14 @@
 #include "stat_reader.h"
 
-void PrintBus(const Bus& bus, std::ostream& output) {
-
-    output << "Bus " << bus.name << ": " << bus.stops.size() << " stops on route, " << CountUniqueStops(bus) << " unique stops, " << ComputeRoute(bus) << " route length" << std::endl;
+void PrintBus(const TransportCatalogue& transport_catalogue, const Bus& bus, std::ostream& output) {
+    auto stats = transport_catalogue.GetBusStats(bus);
+    output << "Bus " << bus.name
+        << ": " << stats.stops_on_route << " stops on route, "
+        << stats.unique_stops << " unique stops, "
+        << stats.route_length << " route length" << std::endl;
 }
 
-void PrintStop(const std::vector<std::string_view>& buses, std::ostream& output) {
+void PrintStop(const std::set<std::string_view>& buses, std::ostream& output) {
 
     if (buses.empty()) {
         output << "no buses" << std::endl;
@@ -25,16 +28,16 @@ void ParseAndPrintStat(const TransportCatalogue& transport_catalogue, std::strin
     std::string_view id = request.substr(0, space);
     std::string_view name = request.substr(space + 1, request.size() - space);
     if (id == "Bus") {
-        const Bus& bus = transport_catalogue.GetBus(name);
-        if (bus.name.size() == 0) {
+        const Bus* bus = transport_catalogue.GetBus(name);
+        if (bus == nullptr) {
             output << request << ": not found" << std::endl;
             return;
         }
-        PrintBus(bus, output);
+        PrintBus(transport_catalogue, *bus, output);
     }
     else if (id == "Stop") {
         output << "Stop " << name << ": ";
-        if (!transport_catalogue.CheckStop(name)) {
+        if (!transport_catalogue.GetStop(name)) {
             output << "not found" << std::endl;
             return;
         }
@@ -44,18 +47,3 @@ void ParseAndPrintStat(const TransportCatalogue& transport_catalogue, std::strin
     }
 }
 
-int CountUniqueStops(const Bus& bus){
-    std::set<std::string_view> set;
-    for (const Stop* s : bus.stops) {
-        set.insert(s->name);
-    }
-    return set.size();
-}
-
-inline double ComputeRoute(const Bus& bus){
-    double res = 0;
-    for (int i = 0; i < bus.stops.size() - 1; ++i) {
-        res += ComputeDistance(bus.stops[i]->cords, bus.stops[i + 1]->cords);
-    }
-    return res;
-}

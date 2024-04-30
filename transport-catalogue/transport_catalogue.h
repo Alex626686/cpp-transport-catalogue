@@ -1,12 +1,13 @@
 #pragma once
+#include <deque>
 #include <vector>
 #include <unordered_set>
-#include <string_view>
 #include <unordered_map>
-#include "geo.h"
-#include <deque>
 #include <string>
+#include <string_view>
 #include <set>
+
+#include "geo.h"
 
 struct Stop {
 	std::string name;
@@ -18,6 +19,12 @@ struct Bus {
 	std::vector<Stop*> stops;
 };
 
+struct BusStats {
+	size_t stops_on_route;
+	int unique_stops;
+	double route_length;
+};
+
 class TransportCatalogue {	
 	std::deque<Stop> stops_;
 	std::unordered_map<std::string_view, Stop*> stops_map_;
@@ -25,12 +32,22 @@ class TransportCatalogue {
 	std::deque<Bus> buses_;
 	std::unordered_map<std::string_view, Bus*> buses_map_;
 	std::unordered_map<std::string_view, std::set<std::string_view>> buses_on_stop_;
-	Bus dummy{};
+
 public:
-	void AddStop(std::string& name, Coordinates p);
-	void AddBus(std::string& name, std::vector<std::string_view> stops);
-	const Bus& GetBus(std::string_view name) const;
-	bool CheckStop(std::string_view stop) const;
-	const std::vector<std::string_view> GetBusesOnStop(const std::string_view& name) const;
+	void AddStop(const std::string& name, Coordinates coordinates);
+
+	void AddBus(const std::string& name, const std::vector<std::string_view>& stops);
+
+	const Bus* GetBus(std::string_view name) const;
+
+	const Stop* GetStop(std::string_view stop) const;
+
+	const std::set<std::string_view> GetBusesOnStop(std::string_view name) const;
+
+	int CountUniqueStops(const Bus& bus) const;
+
+	double ComputeRoute(const Bus& bus) const;
+
+	BusStats GetBusStats(const Bus& bus) const;
 
 };
