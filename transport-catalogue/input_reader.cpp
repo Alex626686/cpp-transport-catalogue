@@ -1,5 +1,8 @@
 #include "input_reader.h"
 
+namespace tc{
+
+namespace input{
 
 /**
  * Парсит строку вида "10.123,  -30.1837" и возвращает пару координат (широта, долгота)
@@ -111,3 +114,7 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
         }
     }
 }
+
+}//namespace input
+
+}//namespace tc

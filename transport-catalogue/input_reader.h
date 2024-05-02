@@ -9,6 +9,10 @@
 #include "geo.h"
 #include "transport_catalogue.h"
 
+namespace tc{
+
+namespace input{
+
 struct CommandDescription {
     // Определяет, задана ли команда (поле command непустое)
     explicit operator bool() const {
@@ -39,3 +43,7 @@ public:
 private:
     std::vector<CommandDescription> commands_;
 };
+
+}//namespace input
+
+}//namespace tc

@@ -9,6 +9,8 @@
 
 #include "geo.h"
 
+namespace tc{
+
 struct Stop {
 	std::string name;
 	Coordinates cords;
@@ -26,6 +28,11 @@ struct BusStats {
 };
 
 class TransportCatalogue {	
+
+	int CountUniqueStops(const Bus& bus) const;
+
+	double ComputeRoute(const Bus& bus) const;
+
 	std::deque<Stop> stops_;
 	std::unordered_map<std::string_view, Stop*> stops_map_;
 
@@ -44,10 +51,9 @@ public:
 
 	const std::set<std::string_view> GetBusesOnStop(std::string_view name) const;
 
-	int CountUniqueStops(const Bus& bus) const;
-
-	double ComputeRoute(const Bus& bus) const;
-
+	
 	BusStats GetBusStats(const Bus& bus) const;
 
 };
+
+}//namespace tk

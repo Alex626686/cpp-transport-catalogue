@@ -1,5 +1,6 @@
 #include "transport_catalogue.h"
 
+namespace tc{
 
 void TransportCatalogue::AddStop(const std::string& name, Coordinates coordinates) {
 	stops_.push_back({ name, std::move(coordinates) });
@@ -55,3 +56,5 @@ double TransportCatalogue::ComputeRoute(const Bus& bus) const {
 BusStats TransportCatalogue::GetBusStats(const Bus& bus) const{
 	return { bus.stops.size(), CountUniqueStops(bus), ComputeRoute(bus) };
 }
+
+}//namespace tk

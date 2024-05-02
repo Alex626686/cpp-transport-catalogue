@@ -1,5 +1,9 @@
 #include "stat_reader.h"
 
+namespace tc{
+
+namespace output{
+
 void PrintBus(const TransportCatalogue& transport_catalogue, const Bus& bus, std::ostream& output) {
     auto stats = transport_catalogue.GetBusStats(bus);
     output << "Bus " << bus.name
@@ -7,6 +11,7 @@ void PrintBus(const TransportCatalogue& transport_catalogue, const Bus& bus, std
         << stats.unique_stops << " unique stops, "
         << stats.route_length << " route length" << std::endl;
 }
+
 
 void PrintStop(const std::set<std::string_view>& buses, std::ostream& output) {
 
@@ -47,3 +52,6 @@ void ParseAndPrintStat(const TransportCatalogue& transport_catalogue, std::strin
     }
 }
 
+}//namespace output
+
+}//namespace tk
