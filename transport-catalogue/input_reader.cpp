@@ -25,6 +25,8 @@ Coordinates ParseCoordinates(std::string_view str) {
     return {lat, lng};
 }
 
+
+
 /**
  * Удаляет пробелы в начале и конце строки
  */
@@ -55,6 +57,27 @@ std::vector<std::string_view> Split(std::string_view string, char delim) {
     }
 
     return result;
+}
+
+// 55.587655, 37.645687, 5600m to Rossoshanskaya ulitsa, 900m to Biryulyovo Tovarnaya
+
+std::vector<std::pair<std::string_view, int>> ParseDistance(std::string_view str) {
+    std::vector<std::pair<std::string_view, int>> res;
+    auto comma = str.find(',');
+    auto space = str.find_first_of(' ', comma + 2);
+    if (space == str.npos) {
+        return res;
+    }
+
+    std::vector<std::string_view> vec = Split(std::string_view(str.substr(space)), ',');
+    for (auto& elem : vec) {
+        auto m = elem.find('m');
+        auto name_begin = elem.find('o');
+        int dist = std::stoi(std::string(elem.substr(0, m)));
+        std::string_view stop_name = elem.substr(name_begin + 2);
+        res.push_back({ stop_name, dist });
+    }
+    return res;
 }
 
 /**
@@ -109,6 +132,10 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
         }
     }
     for (auto& [command, id, description] : commands_) {
+        if (command == "Stop") {
+            auto vec = ParseDistance(description);
+            catalogue.SetDistanceStop(id, vec);
+        }
         if (command == "Bus") {
             catalogue.AddBus(id, ParseRoute(description));
         }

@@ -6,6 +6,20 @@ void TransportCatalogue::AddStop(const std::string& name, Coordinates coordinate
 	stops_.push_back({ name, std::move(coordinates) });
 	stops_map_[stops_.back().name] = &stops_.back();
 }
+
+
+void TransportCatalogue::SetDistanceStop(std::string_view l_stop, std::vector<std::pair<std::string_view, int>> r_stop_dist){
+	Stop* stop_ptr = stops_map_.at(l_stop);
+	for (const auto& elem : r_stop_dist) {
+		Stop* stop_ptr2 = stops_map_.at(elem.first);
+		distance_to_stop_[{stop_ptr, stop_ptr2}] = elem.second;
+		if (!distance_to_stop_.count({ stop_ptr2, stop_ptr })) {
+			distance_to_stop_[{stop_ptr2, stop_ptr}] = elem.second;
+		}
+	}
+}
+
+
 void TransportCatalogue::AddBus(const std::string& name, const std::vector<std::string_view>& stops) {
 	std::vector<Stop*> vec;
 	buses_.push_back({ name, std::move(vec) });
@@ -53,8 +67,22 @@ double TransportCatalogue::ComputeRoute(const Bus& bus) const {
 	return res;
 }
 
+double TransportCatalogue::ComputeRealRoute(const Bus& bus) const {
+	double real_route = 0;
+	for (int i = 1; i < bus.stops.size(); ++i) {
+		real_route += distance_to_stop_.at({ bus.stops[i - 1], bus.stops[i]});
+	}
+	return real_route;
+}
+
+double TransportCatalogue::ComputeCurvature(const double real, const double geo) const {
+	return real / geo;
+}
+
 BusStats TransportCatalogue::GetBusStats(const Bus& bus) const{
-	return { bus.stops.size(), CountUniqueStops(bus), ComputeRoute(bus) };
+	double real_route = ComputeRealRoute(bus);
+	double geo_route = ComputeRoute(bus);
+	return { bus.stops.size(), CountUniqueStops(bus), real_route, ComputeCurvature(real_route, geo_route)};
 }
 
 }//namespace tk

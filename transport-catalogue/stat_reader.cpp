@@ -9,7 +9,8 @@ void PrintBus(const TransportCatalogue& transport_catalogue, const Bus& bus, std
     output << "Bus " << bus.name
         << ": " << stats.stops_on_route << " stops on route, "
         << stats.unique_stops << " unique stops, "
-        << stats.route_length << " route length" << std::endl;
+        << stats.route_length << " route length, "
+        << stats.curvature << " curvature" << std::endl;
 }
 
 

@@ -25,6 +25,7 @@ struct BusStats {
 	size_t stops_on_route;
 	int unique_stops;
 	double route_length;
+	double curvature;
 };
 
 class TransportCatalogue {	
@@ -33,6 +34,10 @@ class TransportCatalogue {
 
 	double ComputeRoute(const Bus& bus) const;
 
+	double ComputeRealRoute(const Bus& bus) const;
+
+	double ComputeCurvature(const double lhs, const double rhs) const;
+
 	std::deque<Stop> stops_;
 	std::unordered_map<std::string_view, Stop*> stops_map_;
 
@@ -40,8 +45,23 @@ class TransportCatalogue {
 	std::unordered_map<std::string_view, Bus*> buses_map_;
 	std::unordered_map<std::string_view, std::set<std::string_view>> buses_on_stop_;
 
+	class PtrsHasher {
+	public:
+		size_t operator()(const std::pair<void*, void*> ptrs) const {
+			return hasher(ptrs.first) + 8 * hasher(ptrs.second);
+		}
+
+	private:
+		std::hash<const void*> hasher;
+	};
+
+	std::unordered_map<std::pair<Stop*, Stop*>, int, PtrsHasher> distance_to_stop_;
+
+
 public:
 	void AddStop(const std::string& name, Coordinates coordinates);
+
+	void SetDistanceStop(std::string_view l_stop, std::vector<std::pair<std::string_view, int>> r_stop_dist);
 
 	void AddBus(const std::string& name, const std::vector<std::string_view>& stops);
 
