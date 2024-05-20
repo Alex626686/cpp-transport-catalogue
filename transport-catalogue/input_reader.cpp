@@ -134,7 +134,9 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
     for (auto& [command, id, description] : commands_) {
         if (command == "Stop") {
             auto vec = ParseDistance(description);
-            catalogue.SetDistanceStop(id, vec);
+            for (auto& elem : vec) {
+                catalogue.SetDistanceStop(id, elem.first, elem.second);
+            }
         }
         if (command == "Bus") {
             catalogue.AddBus(id, ParseRoute(description));

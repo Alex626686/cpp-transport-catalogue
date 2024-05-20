@@ -7,17 +7,19 @@ void TransportCatalogue::AddStop(const std::string& name, Coordinates coordinate
 	stops_map_[stops_.back().name] = &stops_.back();
 }
 
-
-void TransportCatalogue::SetDistanceStop(std::string_view l_stop, std::vector<std::pair<std::string_view, int>> r_stop_dist){
+void TransportCatalogue::SetDistanceStop(std::string_view l_stop, std::string_view r_stop, double distance){
 	Stop* stop_ptr = stops_map_.at(l_stop);
-	for (const auto& elem : r_stop_dist) {
-		Stop* stop_ptr2 = stops_map_.at(elem.first);
-		distance_to_stop_[{stop_ptr, stop_ptr2}] = elem.second;
-		if (!distance_to_stop_.count({ stop_ptr2, stop_ptr })) {
-			distance_to_stop_[{stop_ptr2, stop_ptr}] = elem.second;
-		}
+	Stop* stop_ptr2 = stops_map_.at(r_stop);
+	distance_to_stop_[{stop_ptr, stop_ptr2}] = distance;
+	if (!distance_to_stop_.count({ stop_ptr2, stop_ptr })) {
+		distance_to_stop_[{stop_ptr2, stop_ptr}] = distance;
 	}
 }
+
+double TransportCatalogue::GetDistanceStop(Stop* l_stop, Stop* r_stop)const {
+	return distance_to_stop_.at(std::make_pair(l_stop, r_stop));	
+}
+
 
 
 void TransportCatalogue::AddBus(const std::string& name, const std::vector<std::string_view>& stops) {
@@ -70,7 +72,7 @@ double TransportCatalogue::ComputeRoute(const Bus& bus) const {
 double TransportCatalogue::ComputeRealRoute(const Bus& bus) const {
 	double real_route = 0;
 	for (int i = 1; i < bus.stops.size(); ++i) {
-		real_route += distance_to_stop_.at({ bus.stops[i - 1], bus.stops[i]});
+		real_route += GetDistanceStop(bus.stops.at(i - 1), bus.stops.at(i));
 	}
 	return real_route;
 }

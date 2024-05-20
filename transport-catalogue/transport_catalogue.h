@@ -55,13 +55,15 @@ class TransportCatalogue {
 		std::hash<const void*> hasher;
 	};
 
-	std::unordered_map<std::pair<Stop*, Stop*>, int, PtrsHasher> distance_to_stop_;
+	std::unordered_map<std::pair<Stop*, Stop*>, double, PtrsHasher> distance_to_stop_;
 
 
 public:
 	void AddStop(const std::string& name, Coordinates coordinates);
 
-	void SetDistanceStop(std::string_view l_stop, std::vector<std::pair<std::string_view, int>> r_stop_dist);
+	void SetDistanceStop(std::string_view l_stop, std::string_view r_stop, double distance);
+
+	double GetDistanceStop(Stop* l_stop, Stop* r_stop)const;
 
 	void AddBus(const std::string& name, const std::vector<std::string_view>& stops);
 
