@@ -1,4 +1,7 @@
 #pragma once
+
+#include "domain.h"
+
 #include <deque>
 #include <vector>
 #include <unordered_set>
@@ -6,76 +9,67 @@
 #include <string>
 #include <string_view>
 #include <set>
+#include <map>
 
-#include "geo.h"
 
-namespace tc{
 
-struct Stop {
-	std::string name;
-	Coordinates cords;
-};
 
-struct Bus {
-	std::string name;
-	std::vector<Stop*> stops;
-};
 
-struct BusStats {
-	size_t stops_on_route;
-	int unique_stops;
-	double route_length;
-	double curvature;
-};
+namespace tc {
 
-class TransportCatalogue {	
 
-	int CountUniqueStops(const Bus& bus) const;
+	class TransportCatalogue {
 
-	double ComputeRoute(const Bus& bus) const;
+		int CountUniqueStops(const Bus& bus) const;
 
-	double ComputeRealRoute(const Bus& bus) const;
+		double ComputeRoute(const Bus& bus) const;
 
-	double ComputeCurvature(const double lhs, const double rhs) const;
+		double ComputeRealRoute(const Bus& bus) const;
 
-	std::deque<Stop> stops_;
-	std::unordered_map<std::string_view, Stop*> stops_map_;
+		double ComputeCurvature(const double lhs, const double rhs) const;
 
-	std::deque<Bus> buses_;
-	std::unordered_map<std::string_view, Bus*> buses_map_;
-	std::unordered_map<std::string_view, std::set<std::string_view>> buses_on_stop_;
+		std::deque<Stop> stops_;
+		std::unordered_map<std::string_view, Stop*> stops_map_;
 
-	class PtrsHasher {
+		std::deque<Bus> buses_;
+		std::unordered_map<std::string_view, Bus*> buses_map_;
+		std::unordered_map<std::string_view, std::set<std::string_view>> buses_on_stop_;
+
+		class PtrsHasher {
+		public:
+			size_t operator()(const std::pair<void*, void*> ptrs) const {
+				return hasher(ptrs.first) + 8 * hasher(ptrs.second);
+			}
+
+		private:
+			std::hash<const void*> hasher;
+		};
+
+		std::unordered_map<std::pair<Stop*, Stop*>, int, PtrsHasher> distance_to_stop_;
+
+
 	public:
-		size_t operator()(const std::pair<void*, void*> ptrs) const {
-			return hasher(ptrs.first) + 8 * hasher(ptrs.second);
-		}
+		void AddStop(const std::string_view name, geo::Coordinates coordinates);
 
-	private:
-		std::hash<const void*> hasher;
+		void SetDistanceStop(std::string_view l_stop, std::string_view r_stop, int distance);
+
+		int GetDistanceStop(Stop* l_stop, Stop* r_stop)const;
+
+		void AddBus(const std::string_view& name, const std::vector<std::string_view>& stops, bool is_roundtrip);
+
+
+		const Bus* GetBus(std::string_view name) const;
+
+		const Stop* GetStop(std::string_view stop) const;
+
+		const std::set<std::string_view> GetBusesOnStop(std::string_view name) const;
+
+
+		BusStats GetBusStats(const Bus& bus) const;
+
+		std::map<std::string_view, const Bus*> GetAllBusses()const;
+
+
 	};
 
-	std::unordered_map<std::pair<Stop*, Stop*>, double, PtrsHasher> distance_to_stop_;
-
-
-public:
-	void AddStop(const std::string& name, Coordinates coordinates);
-
-	void SetDistanceStop(std::string_view l_stop, std::string_view r_stop, double distance);
-
-	double GetDistanceStop(Stop* l_stop, Stop* r_stop)const;
-
-	void AddBus(const std::string& name, const std::vector<std::string_view>& stops);
-
-	const Bus* GetBus(std::string_view name) const;
-
-	const Stop* GetStop(std::string_view stop) const;
-
-	const std::set<std::string_view> GetBusesOnStop(std::string_view name) const;
-
-	
-	BusStats GetBusStats(const Bus& bus) const;
-
-};
-
-}//namespace tk
+}//namespace tc
