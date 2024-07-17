@@ -53,7 +53,7 @@ namespace tc {
 
 		void SetDistanceStop(std::string_view l_stop, std::string_view r_stop, int distance);
 
-		int GetDistanceStop(Stop* l_stop, Stop* r_stop)const;
+		int GetDistanceStop(Stop* stop_from, Stop* stop_to)const;
 
 		void AddBus(const std::string_view& name, const std::vector<std::string_view>& stops, bool is_roundtrip);
 
@@ -67,6 +67,8 @@ namespace tc {
 
 		BusStats GetBusStats(const Bus& bus) const;
 
+		//String_view исспользую, для сортировки по алфавиту(условие задания), если убрать надо будет потом сортировать, не знаю, как сделать,
+		// чтобы не пострадала эффективность, в map_renderer тоже надо все мапы убрать(еще надо, чтобы остановки не повторялись)?
 		std::map<std::string_view, const Bus*> GetAllBusses()const;
 
 

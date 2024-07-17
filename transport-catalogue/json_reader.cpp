@@ -10,19 +10,25 @@
 using namespace std::literals;
 
 const json::Node& JsonReader::GetBaseRequests() const{
-	if (!input_.GetRoot().AsDict().count("base_requests"s)) return node_null_;
-	return input_.GetRoot().AsDict().at("base_requests"s);
+	const auto& dict = input_.GetRoot().AsDict();
+	const auto it = dict.find("base_requests"s);
+	if (it == dict.end()) return node_null_;
+	return it->second;
 
 }
 
 const json::Node& JsonReader::GetStatRequests() const{
-	if (!input_.GetRoot().AsDict().count("stat_requests"s)) return node_null_;
-	return input_.GetRoot().AsDict().at("stat_requests"s);
+	const auto& dict = input_.GetRoot().AsDict();
+	const auto it = dict.find("stat_requests"s);
+	if (it == dict.end()) return node_null_;
+	return it->second;
 }
 
 const json::Node JsonReader::GetRenderSettings() const{
-	if (!input_.GetRoot().AsDict().count("render_settings"s)) return node_null_;
-	return input_.GetRoot().AsDict().at("render_settings"s);
+	const auto& dict = input_.GetRoot().AsDict();
+	const auto it = dict.find("render_settings"s);
+	if (it == dict.end()) return node_null_;
+	return it->second;
 }
 
 
@@ -41,8 +47,8 @@ void JsonReader::FillCatalogue(tc::TransportCatalogue& cataclogue) const{
 		}
 	}
 
-	for (auto& [stop, stop2, dist] : vec_dist) {
-		cataclogue.SetDistanceStop(stop, stop2, dist);
+	for (const auto& [stop_from, stop_to, dist] : vec_dist) {
+		cataclogue.SetDistanceStop(stop_from, stop_to, dist);
 	}
 
 	for (const auto& request : arr) {

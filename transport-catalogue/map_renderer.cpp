@@ -76,9 +76,8 @@ private:
     double zoom_coeff_ = 0;
 };
 
-std::vector<svg::Polyline> MapRenderer::GetBusLines(const std::map<std::string_view, const tc::Bus*>& buses, SphereProjector& cp) const{
+void MapRenderer::GetBusLines(const std::map<std::string_view, const tc::Bus*>& buses, SphereProjector& cp, svg::Document& doc) const{
     using namespace svg;
-    std::vector<Polyline> res;
     int color_counter = 0;
     for (const auto& [name, bus] : buses) {
         if (bus->stops.empty()) continue;
@@ -99,7 +98,7 @@ std::vector<svg::Polyline> MapRenderer::GetBusLines(const std::map<std::string_v
         line.SetStrokeLineJoin(StrokeLineJoin::ROUND);
         line.SetStrokeWidth(renderer_settings_.line_width);
         
-        res.push_back(line);
+        doc.Add(line);
         if (color_counter < renderer_settings_.color_palette.size() - 1) {
             ++color_counter;
         }
@@ -107,12 +106,10 @@ std::vector<svg::Polyline> MapRenderer::GetBusLines(const std::map<std::string_v
             color_counter = 0;
         }
     }
-    return res;
 }
 
-std::vector<svg::Text> MapRenderer::GetBusNames(const std::map<std::string_view, const tc::Bus*>& buses, SphereProjector& sp) const{
+void MapRenderer::GetBusNames(const std::map<std::string_view, const tc::Bus*>& buses, SphereProjector& sp, svg::Document& doc) const{
     using namespace svg;
-    std::vector<Text> res;
     int color_counter = 0;
 
     for (const auto& [name, bus] : buses) {
@@ -145,8 +142,8 @@ std::vector<svg::Text> MapRenderer::GetBusNames(const std::map<std::string_view,
         underlayer.SetStrokeLineCap(StrokeLineCap::ROUND);
         underlayer.SetStrokeLineJoin(StrokeLineJoin::ROUND);
 
-        res.push_back(underlayer);
-        res.push_back(text);
+        doc.Add(underlayer);
+        doc.Add(text);
 
         if (!bus->is_roundtrip && bus->stops.at(0) != bus->stops.at(bus->stops.size() - 1)) {
             Text text2 = text;
@@ -154,15 +151,13 @@ std::vector<svg::Text> MapRenderer::GetBusNames(const std::map<std::string_view,
             text2.SetPosition(sp(bus->stops.at(bus->stops.size() - 1)->cords));
             underlayer2.SetPosition(sp(bus->stops.at(bus->stops.size() - 1)->cords));
 
-            res.push_back(underlayer2);
-            res.push_back(text2);
+            doc.Add(underlayer2);
+            doc.Add(text2);
         }
     }
-    return res;
 }
 
-std::vector<svg::Circle> MapRenderer::GetStopsPoints(const std::map<std::string_view, const tc::Stop*>& stops, SphereProjector& sp) const{
-    std::vector<svg::Circle> res;
+void MapRenderer::GetStopsPoints(const std::map<std::string_view, const tc::Stop*>& stops, SphereProjector& sp, svg::Document& doc) const{
 
     for (const auto& [stop_name, stop] : stops) {
         svg::Circle point;
@@ -171,14 +166,12 @@ std::vector<svg::Circle> MapRenderer::GetStopsPoints(const std::map<std::string_
         point.SetRadius(renderer_settings_.stop_radius);
         point.SetFillColor("white");
 
-        res.push_back(point);
+        doc.Add(point);
     }
-    return res;
 }
 
-std::vector<svg::Text> MapRenderer::GetStopsNames(const std::map<std::string_view, const tc::Stop*>& stops, SphereProjector& sp) const{
+void MapRenderer::GetStopsNames(const std::map<std::string_view, const tc::Stop*>& stops, SphereProjector& sp, svg::Document& doc) const{
     using namespace svg;
-    std::vector<Text> res;
     Text text;
     for (const auto& [stop_name, stop] : stops) {
         text.SetPosition(sp(stop->cords));
@@ -200,10 +193,9 @@ std::vector<svg::Text> MapRenderer::GetStopsNames(const std::map<std::string_vie
         underlayer.SetStrokeLineCap(svg::StrokeLineCap::ROUND);
         underlayer.SetStrokeLineJoin(svg::StrokeLineJoin::ROUND);
 
-        res.push_back(underlayer);
-        res.push_back(text);
+        doc.Add(underlayer);
+        doc.Add(text);
     }
-    return res;
 }
 
 
@@ -222,18 +214,10 @@ svg::Document MapRenderer::GetSvg(const std::map<std::string_view, const tc::Bus
     //PointInputIt points_begin, PointInputIt points_end,    double max_width, double max_height, double padding
     SphereProjector sp(stops_cords.begin(), stops_cords.end(), renderer_settings_.width, renderer_settings_.height, renderer_settings_.padding);
 
-    for (const auto& line : GetBusLines(buses, sp)) {
-        res.Add(line);
-    }
-    for (const auto& bus_name : GetBusNames(buses, sp)) {
-        res.Add(bus_name);
-    }
-    for (const auto& point : GetStopsPoints(stops, sp)) {
-        res.Add(point);
-    }
-    for (const auto& stop_name : GetStopsNames(stops, sp)) {
-        res.Add(stop_name);
-    }
+    GetBusLines(buses, sp, res);
+    GetBusNames(buses, sp, res);
+    GetStopsPoints(stops, sp, res);
+    GetStopsNames(stops, sp, res);
     return res;
 }
 

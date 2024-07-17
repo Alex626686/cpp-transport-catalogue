@@ -35,13 +35,13 @@ public:
 	MapRenderer(RendererSettings renderer_settings)
 		: renderer_settings_(renderer_settings) {}
 
-	std::vector<svg::Polyline> GetBusLines(const std::map<std::string_view, const tc::Bus*>&, SphereProjector&) const;
+	void GetBusLines(const std::map<std::string_view, const tc::Bus*>&, SphereProjector&, svg::Document&) const;
 
-	std::vector<svg::Text> GetBusNames(const std::map<std::string_view, const tc::Bus*>&, SphereProjector&) const;
+	void GetBusNames(const std::map<std::string_view, const tc::Bus*>&, SphereProjector&, svg::Document&) const;
 
-	std::vector<svg::Circle> GetStopsPoints(const std::map<std::string_view, const tc::Stop*>&, SphereProjector&) const;
+	void GetStopsPoints(const std::map<std::string_view, const tc::Stop*>&, SphereProjector&, svg::Document&) const;
 
-	std::vector<svg::Text> GetStopsNames(const std::map<std::string_view, const tc::Stop*>&, SphereProjector&) const;
+	void GetStopsNames(const std::map<std::string_view, const tc::Stop*>&, SphereProjector&, svg::Document&) const;
 
 	svg::Document GetSvg(const std::map<std::string_view, const tc::Bus*>) const;
 

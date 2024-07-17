@@ -18,8 +18,8 @@ namespace tc {
 		}
 	}
 
-	int TransportCatalogue::GetDistanceStop(Stop* l_stop, Stop* r_stop)const {
-		return distance_to_stop_.at({ l_stop,r_stop });
+	int TransportCatalogue::GetDistanceStop(Stop* stop_from, Stop* stop_to)const {
+		return distance_to_stop_.at({ stop_from,stop_to });
 	}
 
 
@@ -35,22 +35,25 @@ namespace tc {
 	}
 
 	const Bus* TransportCatalogue::GetBus(std::string_view name) const {
-		if (buses_map_.count(name)) {
-			return buses_map_.at(name);
+		const auto it = buses_map_.find(name);
+		if (it != buses_map_.end()) {
+			return it->second;
 		}
 		return nullptr;
 	}
 
 	const Stop* TransportCatalogue::GetStop(std::string_view name) const {
-		if (stops_map_.count(name)) {
-			return stops_map_.at(name);
+		const auto it = stops_map_.find(name);
+		if (it != stops_map_.end()) {
+			return it->second;
 		}
 		return nullptr;
 	}
 
 	const std::set<std::string_view> TransportCatalogue::GetBusesOnStop(std::string_view name) const {
-		if (buses_on_stop_.count(name)) {
-			return buses_on_stop_.at(name);
+		const auto it = buses_on_stop_.find(name);
+		if (it != buses_on_stop_.end()) {
+			return it->second;
 		}
 		return std::set<std::string_view>{};
 	}
