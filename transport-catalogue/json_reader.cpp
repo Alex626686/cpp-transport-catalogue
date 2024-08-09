@@ -136,17 +136,17 @@ json::Node JsonReader::PrintStop(const json::Dict& map_request, const tc::Transp
 			buses.push_back(std::string(bus));
 		}
 
-		result = json::Dict{
-				{"request_id"s, id},
-				{"buses"s, buses}
-		};
+		result = json::Builder().StartDict().
+			Key("request_id"s).Value(id).
+			Key("buses"s).Value(buses).
+			EndDict().Build();
 
 	}
 	else {
-		result = json::Dict{
-			{"request_id"s, id},
-			{"error_message"s, "not found"s}
-		};
+		result = json::Builder().StartDict().
+			Key("request_id"s).Value(id).
+			Key("error_message"s).Value("not found"s).
+			EndDict().Build();
 	}
 	return result;
 }
@@ -159,19 +159,20 @@ json::Node JsonReader::PrintBus(const json::Dict& map_request, const tc::Transpo
 	if (const tc::Bus* bus = catalogue.GetBus(name)) {
 		const tc::BusStats& bus_stats = catalogue.GetBusStats(*bus);
 
-		result = json::Dict{
-			{"request_id"s, id},
-			{"curvature"s, bus_stats.curvature},
-			{"route_length"s, bus_stats.route_length},
-			{"stop_count"s, bus_stats.stops_on_route},
-			{"unique_stop_count"s, bus_stats.unique_stops}
-		};
+		result = json::Builder().StartDict().
+			Key("request_id"s).Value(id).
+			Key("curvature"s).Value(bus_stats.curvature).
+			Key("route_length"s).Value(bus_stats.route_length).
+			Key("stop_count"s).Value(bus_stats.stops_on_route).
+			Key("unique_stop_count"s).Value(bus_stats.unique_stops).
+			EndDict().Build();
 	}
 	else {
-		result = json::Dict{
-			{"request_id"s, id},
-			{"error_message"s, "not found"s}
-		};
+		
+		result = json::Builder().StartDict().
+			Key("request_id"s).Value(id).
+			Key("error_message"s).Value("not found"s).
+			EndDict().Build();
 	}
 	return result;
 }
@@ -182,10 +183,10 @@ json::Node JsonReader::PrintMap(const json::Dict& map_request, const tc::Transpo
 	svg::Document doc = mr.GetSvg(tc.GetAllBusses());
 	doc.Render(osstrm);
 
-	json::Node result = json::Dict{
-		{"request_id"s, map_request.at("id"s).AsInt()},
-		{"map"s, osstrm.str()}
-	};
+	json::Node result = json::Builder().StartDict().
+		Key("request_id"s).Value(map_request.at("id"s).AsInt()).
+		Key("map"s).Value(osstrm.str()).
+		EndDict().Build();
 	return result;
 }
 

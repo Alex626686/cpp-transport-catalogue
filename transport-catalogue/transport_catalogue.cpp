@@ -1,6 +1,5 @@
 #include "transport_catalogue.h"
 
-#include "transport_catalogue.h"
 
 namespace tc {
 
