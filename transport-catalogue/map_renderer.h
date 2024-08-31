@@ -15,7 +15,7 @@ namespace render{
 
 class SphereProjector;
 
-struct RendererSettings {
+struct RenderSettings {
 	double width;
 	double height;
 	double padding;
@@ -32,7 +32,9 @@ struct RendererSettings {
 
 class MapRenderer {
 public:
-	MapRenderer(RendererSettings renderer_settings)
+	MapRenderer() = default;
+
+	MapRenderer(RenderSettings renderer_settings)
 		: renderer_settings_(renderer_settings) {}
 
 	void GetBusLines(const std::map<std::string_view, const tc::Bus*>&, SphereProjector&, svg::Document&) const;
@@ -46,7 +48,7 @@ public:
 	svg::Document GetSvg(const std::map<std::string_view, const tc::Bus*>) const;
 
 private:
-	RendererSettings renderer_settings_;
+	RenderSettings renderer_settings_;
 };
 
 } //render

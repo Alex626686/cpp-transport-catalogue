@@ -67,10 +67,9 @@ namespace tc {
 
 		BusStats GetBusStats(const Bus& bus) const;
 
-		//String_view исспользую, для сортировки по алфавиту(условие задания), если убрать надо будет потом сортировать, не знаю, как сделать,
-		// чтобы не пострадала эффективность, в map_renderer тоже надо все мапы убрать(еще надо, чтобы остановки не повторялись)?
 		std::map<std::string_view, const Bus*> GetAllBusses()const;
 
+		std::map<std::string_view, const Stop*> GetAllStops()const;
 
 	};
 

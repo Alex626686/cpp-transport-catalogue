@@ -113,4 +113,14 @@ namespace tc {
 		return res;
 	}
 
+	std::map<std::string_view, const Stop*> TransportCatalogue::GetAllStops() const{
+		std::map<std::string_view, const Stop*> res;
+		for (const auto& stop : stops_map_) {
+			res.insert(stop);
+		}
+		return res;
+	}
+
+
+
 }//namespace tk

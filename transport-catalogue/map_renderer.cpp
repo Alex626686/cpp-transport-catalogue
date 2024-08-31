@@ -78,7 +78,7 @@ private:
 
 void MapRenderer::GetBusLines(const std::map<std::string_view, const tc::Bus*>& buses, SphereProjector& cp, svg::Document& doc) const{
     using namespace svg;
-    int color_counter = 0;
+    size_t color_counter = 0;
     for (const auto& [name, bus] : buses) {
         if (bus->stops.empty()) continue;
         Polyline line;
@@ -110,7 +110,7 @@ void MapRenderer::GetBusLines(const std::map<std::string_view, const tc::Bus*>& 
 
 void MapRenderer::GetBusNames(const std::map<std::string_view, const tc::Bus*>& buses, SphereProjector& sp, svg::Document& doc) const{
     using namespace svg;
-    int color_counter = 0;
+    size_t color_counter = 0;
 
     for (const auto& [name, bus] : buses) {
         if (bus->stops.empty()) continue;

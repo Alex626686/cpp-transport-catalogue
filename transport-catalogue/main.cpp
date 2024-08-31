@@ -1,6 +1,6 @@
-#include "json_reader.h"
-#include "map_renderer.h"
 
+#include "request_handler.h"
+#include "json_reader.h"
 int main() {
     /*
      * Примерная структура программы:
@@ -11,8 +11,10 @@ int main() {
      * с ответами Вывести в stdout ответы в виде JSON
      */
 
-    JsonReader jsr(std::cin);
-    tc::TransportCatalogue tk;
-    jsr.FillCatalogue(tk);
-    jsr.Print(tk);
+    JsonReader reader(std::cin);
+    tc::TransportCatalogue catalogue;
+    reader.FillCatalogue(catalogue);
+    RequestHandler handler(catalogue, reader.FillRenderSettings(), reader.FillRouterSettings());
+    reader.Print(handler);
+
 }

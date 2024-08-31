@@ -2,11 +2,10 @@
 #include "json_builder.h"
 #include "transport_catalogue.h"
 #include "map_renderer.h"
+#include "transport_router.h"
+#include "request_handler.h"
 
-/*
- * Здесь можно разместить код наполнения транспортного справочника данными из JSON,
- * а также код обработки запросов к базе и формирование массива ответов в формате JSON
- */
+
 
 class JsonReader {
 public:
@@ -15,27 +14,22 @@ public:
     {}
 
     const json::Node& GetBaseRequests() const;
-
     const json::Node& GetStatRequests() const;
-
-    const json::Node GetRenderSettings() const;
+    const json::Node& GetRenderSettings() const;
+    const json::Node& GetRouterSettings() const;
 
     void FillCatalogue(tc::TransportCatalogue&) const;
-
-    render::RendererSettings FillRenderSettings() const;
+    render::RenderSettings FillRenderSettings() const;
+    RouterSettings FillRouterSettings() const;
 
     std::tuple<std::string_view, geo::Coordinates, std::map<std::string_view, int>> GetStopVars(const json::Dict& request_map) const;
-
     std::tuple<std::string_view, std::vector<std::string_view>, bool> GetBusVars(const json::Dict& request_map) const;
 
-    void Print(const tc::TransportCatalogue& catalogue) const;
-
-    json::Node PrintStop(const json::Dict&, const tc::TransportCatalogue&) const;
-
-    json::Node PrintBus(const json::Dict&, const tc::TransportCatalogue&) const;
-
-    json::Node PrintMap(const json::Dict&, const tc::TransportCatalogue&) const;
-
+    void Print(const RequestHandler& handler) const;
+    json::Node PrintStop(const json::Dict&, const RequestHandler&) const;
+    json::Node PrintBus(const json::Dict&, const RequestHandler&) const;
+    json::Node PrintMap(const json::Dict&, const RequestHandler&) const;
+    json::Node PrintRoute(const json::Dict&, const RequestHandler&) const;
     
 
 private:
