@@ -222,11 +222,7 @@ json::Node JsonReader::PrintRoute(const json::Dict& map_request, const RequestHa
  	const int id = map_request.at("id"s).AsInt();	
 	const auto& route = handler.GetRouter().FindRoute(from, to);
 
-<<<<<<< HEAD
-	if (!route) {
-=======
 	if (!route.empty() && !route[0]) {
->>>>>>> d924e7d (2)
 		result = json::Builder{}
 			.StartDict()
 			.Key("request_id"s).Value(id)
@@ -237,17 +233,6 @@ json::Node JsonReader::PrintRoute(const json::Dict& map_request, const RequestHa
 	else {
 		json::Array items;
 		double total_time = 0.0;
-<<<<<<< HEAD
-		items.reserve(route.value().edges.size());
-		for (auto& edge_id : route.value().edges) {
-			const graph::Edge<double> edge = handler.GetRouter().GetEdge(edge_id);
-			if (edge.count_move != 0) {
-				items.emplace_back(json::Node(json::Builder{}
-					.StartDict()
-					.Key("bus"s).Value(edge.name)
-					.Key("span_count"s).Value(static_cast<int>( edge.count_move))
-					.Key("time"s).Value(edge.weight)
-=======
 		items.reserve(route.size());
 		for (const auto& edge : route) {
 			if (edge->count_move != 0) {
@@ -256,36 +241,22 @@ json::Node JsonReader::PrintRoute(const json::Dict& map_request, const RequestHa
 					.Key("bus"s).Value(edge->name)
 					.Key("span_count"s).Value(static_cast<int>( edge->count_move))
 					.Key("time"s).Value(edge->weight)
->>>>>>> d924e7d (2)
 					.Key("type"s).Value("Bus"s)
 					.EndDict()
 					.Build()));
 
-<<<<<<< HEAD
-				total_time += edge.weight;
-=======
 				total_time += edge->weight;
->>>>>>> d924e7d (2)
 				}
 			else {
 				items.emplace_back(json::Node(json::Builder{}
 					.StartDict()
-<<<<<<< HEAD
-					.Key("stop_name"s).Value(edge.name)
-					.Key("time"s).Value(edge.weight)
-=======
 					.Key("stop_name"s).Value(edge->name)
 					.Key("time"s).Value(edge->weight)
->>>>>>> d924e7d (2)
 					.Key("type"s).Value("Wait"s)
 					.EndDict()
 					.Build()));
 
-<<<<<<< HEAD
-				total_time += edge.weight;
-=======
 				total_time += edge->weight;
->>>>>>> d924e7d (2)
 			}
 		}
 		result = json::Builder{}

@@ -80,11 +80,7 @@ private:
     }
 
     static constexpr Weight ZERO_WEIGHT{};
-<<<<<<< HEAD
-    Graph graph_;
-=======
     const Graph& graph_;
->>>>>>> d924e7d (2)
     RoutesInternalData routes_internal_data_;
 };
 
